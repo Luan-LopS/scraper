@@ -28,6 +28,7 @@ ULTIMA_CONSULTA = ontem.strftime("%Y-%m-%dT%H:%M:%S")
 print(ULTIMA_CONSULTA)
 
 def scraper():
+    print("Iniciando scraper Trend...")
     options = Options()
     options.add_argument('--headless')  # Não abre o navegador
     nav = webdriver.Chrome(options=options)
@@ -109,6 +110,7 @@ def scraper():
             
     nav.quit()
     #print(resultado)
+    print("Finalizado scraper Trend...")
 
     return resultado
 

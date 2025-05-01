@@ -90,6 +90,7 @@ def scraper():
        
     nav.quit()
 #    print(resultado)
+    print("Finalizado scraper Huawei...")
     return resultado
 
 #scraper()

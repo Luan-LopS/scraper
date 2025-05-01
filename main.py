@@ -3,107 +3,107 @@ import pandas as pd #trabalhar com o excel
 from datetime import datetime # trabalhar com datas
 import schedule # agendar execução
 import time # sleep
-from multiprocessing import Process, Queue, freeze_support #Processar em paralelo
-from scrapers import palo_alto, splunk, qualys, trend, huawei # importa scrapers
+from multiprocessing import freeze_support #Processar em paralelo
+from scrapers import palo_alto, splunk, qualys, trend, huawei, aws, google, oragle # importa scrapers
 import concurrent.futures 
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
+from io import BytesIO
+from xlsxwriter import Workbook
+import requests
 
+webhook_url = "https://compwirecombr.webhook.office.com/webhookb2/446415a8-43f6-4b9f-9fef-1701fe1fb814@4459998e-7581-4529-973d-e4738fe9a2a9/IncomingWebhook/8b137d6764374128836390171a438279/f87bd603-b64d-46e1-a813-4310327057dd/V2H1BBBzX7OUNFNMa5oq7ZTsbNFksd9AkG1B1f6ut688w1"
+mensagem = "✅ Scraping e envio de e-mail concluídos com sucesso!"
+ 
 
-USER = os.getenv("USERNAME")
-RELATORIO = rf"C:\Users\{USER}\Desktop\Relatorio.xlsx"
+def enviar_teams(mensagem, webhook_url):
+    payload = {"text": mensagem}
+    headers = {"Content-Type": "application/json"}
+    response = requests.post(webhook_url, json=payload, headers=headers)
 
-def enviar_teams():
-    pass
+    if response.status_code == 200:
+        print("Mensagem enviada com sucesso ao Teams.")
+    else:
+        print(f"Erro ao enviar para Teams: {response.status_code} - {response.text}")
 
+# Exemplo de uso
 
-def enviar_email(resultado):
-    load_dotenv()
+def enviar_email(resultado, excel_buffer):
+    load_dotenv(find_dotenv())
     
     username = os.getenv('EMAIL_USER')
     senha = os.getenv('EMAIL_PASSWORD')
     smtp_server = 'smtp.gmail.com'
     smtp_port = 465
-    destinatario = 'luan.siqueira@compwire.com.br'
+    destinatarios = ['luan.siqueira@compwire.com.br','vinicius.clemente@compwire.com.br', '']
     assunto = 'CVES'
-    corpo = f"Sergue relatios de cves do dia de hoje: {len(resultado)}"
+    corpo = f"Segue relatios de cves do dia de hoje: {len(resultado)}"
 
     msg = MIMEMultipart()
     msg["From"] = username
-    msg["To"]= destinatario
+    msg["To"]= ', '.join(destinatarios)
     msg["Subject"] = assunto
 
     msg.attach(MIMEText(corpo,"plain"))
 
-    with open(RELATORIO, "rb") as f:
-        parte = MIMEApplication(f.read(), _subtype="xlsx")
-        parte.add_header("Content-Disposition", "attachment", filename=os.path.basename(RELATORIO))
-        msg.attach(parte)
+     # Anexa o Excel da memória
+    parte = MIMEApplication(excel_buffer.read(), _subtype="xlsx")
+    parte.add_header("Content-Disposition", "attachment", filename="relatorio_cves.xlsx")
+    msg.attach(parte)
 
     try:
         with smtplib.SMTP_SSL(smtp_server, smtp_port) as srv:
-            srv.login(username,senha)
+            srv.login(username, senha)
             srv.send_message(msg)
             print('Email enviado')
+
+        enviar_teams(mensagem, webhook_url)
     except Exception as e:
-        print('Erro:', e )
+        print('Erro ao enviar e-mail:', e)
 
 
 
 def gerandor_relatorio(resultado):
     print("Iniciando relatorio...")
 
-    nova = pd.DataFrame(resultado) 
+    excel = pd.DataFrame(resultado) 
 
-    if os.path.exists(RELATORIO):
-        try:
-            df = pd.read_excel(RELATORIO)
+    colunas=['data', 'titulo', 'descrição', 'urgencia', 'link']
+    if not all (col in excel.columns for col in colunas):
+        excel = excel.reindex(columns=colunas)
 
-        except Exception as e:
-            print(f"----{e}-----")
-            df = pd.DataFrame(columns=[
-                            'data',
-                            'titulo',
-                            'descição',
-                            'urgencia',
-                            'link'
-                                        ])
-            df.to_excel(RELATORIO, index=False)
- 
-    else:
-        df = pd.DataFrame(columns=[
-                            'data',
-                            'titulo',
-                            'descição',
-                            'urgencia',
-                            'link'
-                                        ])
+    buffer = BytesIO()
+    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+        excel.to_excel(writer, index=False, sheet_name='CVES')
+    buffer.seek(0)
 
-    df = pd.concat([df, nova], ignore_index=True)
-    df.to_excel(RELATORIO, index=False)
-    print("Finalizado relatorio")
-    enviar_email(resultado)
+    print("Relatório pronto. Enviando por e-mail...")
+    enviar_email(resultado, buffer)
 
 
 def gereciador_scraping():
     
-    with concurrent.futures.ProcessPoolExecutor() as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
 
         futuros = [
             executor.submit(palo_alto.scraper),
             executor.submit(splunk.scraper),
             executor.submit(qualys.scraper),
             executor.submit(trend.scraper),
-            executor.submit(huawei.scraper)
+            executor.submit(huawei.scraper),
+            executor.submit(aws.scraper),
+            executor.submit(google.scraper),
+            executor.submit(oragle.scraper)
+            
         ]
 
         resultado = []
         for futuro in futuros:
             try:
-                dados = futuro.result(timeout=60)
+                dados = futuro.result(timeout=80)
                 resultado.extend(dados)
             except Exception as e:
                 print(f"[MAIN] Erro ao processar scraper: {e}")
@@ -111,13 +111,15 @@ def gereciador_scraping():
     if resultado:
         gerandor_relatorio(resultado)
     else:
-        print("[MAIN] Nenhum resultado encontrado.")    
+        print("[MAIN] Nenhum resultado encontrado.")
+        gerandor_relatorio(resultado)
 
-
-schedule.every(5).minutes.do(gereciador_scraping)
+schedule.every(4).hours.do(gereciador_scraping)
 
 if __name__ == "__main__":
     gereciador_scraping()
     freeze_support()
-    schedule.run_pending()
-    time.sleep(60)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(60)

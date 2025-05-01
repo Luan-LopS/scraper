@@ -95,6 +95,7 @@ def scraper():
     print("Finalizando scraper splunk.")
     nav.quit()
 #    print(resultado)
+
     return resultado
 
 

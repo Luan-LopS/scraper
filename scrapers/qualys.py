@@ -10,6 +10,7 @@ ULTIMA_CONSULTA = datetime.today()  # dia atual
 resultado=[]
 
 def scraper():
+    print("Iniciando scraper Qualys...")
     options = Options()
     options.add_argument('--headless')  # Não abre o navegador
     nav = webdriver.Chrome(options=options)
@@ -82,6 +83,7 @@ def scraper():
             
     nav.quit()
 #    print(resultado)
+    print("Finalizado scraper Qualys...")
     return resultado
 
 #scraper()

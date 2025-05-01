@@ -11,7 +11,7 @@ ULTIMA_CONSULTA = datetime.today() # dia de hoje
 resultado = []
 
 def scraper():
-    print("Iniciando scraper...")
+    print("Iniciando scraper Palo Alto...")
     options = Options()
     options.add_argument('--headless')  # Não abre o navegador
     nav = webdriver.Chrome(options=options)
@@ -82,7 +82,7 @@ def scraper():
                 i += 1
                 continue
 
-    print("Finalizando scraper.")
+    print("Finalizando scraper Palo alto.")
     
     nav.quit()
 #    print(resultado)

@@ -18,6 +18,7 @@ RELATORIO = rf"C:\Users\{USER}\Desktop\Relatorio.xlsx"
 
 
 def acessarSite():
+    print("Iniciando scraper Veaam...")
     options = Options()
     options.add_argument("--start-maximized") 
     nav = webdriver.Chrome(options=options)
@@ -99,25 +100,11 @@ def acessarSite():
                 print(f"Erro com o elemento ou índice fora do alcance: {e}. Continuando.")
                 i += 1
                 continue
+                
+
+    print("Iniciando scraper Palo Alto...")
+
     nav.quit()
-
-def verificar_exite(data, titulo, descricao, urgencia, pag):
-    nova = pd.DataFrame({"Data": [data], "Titulo":[titulo], "Descrição":[descricao],"Urgêcia": [urgencia], "Link pagina": [pag]}) 
-
-    if os.path.exists(RELATORIO):
-        try:
-            df = pd.read_excel(RELATORIO)
-
-        except Exception as e:
-            print(f"----{e}-----")
-            df = pd.DataFrame(columns=["Data","Titulo","Descrição", "Urgência", "Link pagina"])
-            df.to_excel(RELATORIO, index=False)
- 
-    else:
-        df = pd.DataFrame(columns=["Data","Titulo","Descrição","Urgência","Link pagina"])
-
-    df = pd.concat([df, nova], ignore_index=True)
-    df.to_excel(RELATORIO, index=False)
 
 '''    
 
