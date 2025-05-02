@@ -87,6 +87,7 @@ def gerandor_relatorio(resultado, fabricante):
 
     buffer = BytesIO()
     with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+        for fab in fabricante:
         excel.to_excel(writer, index=False, sheet_name=fabricante)
     buffer.seek(0)
 
@@ -113,7 +114,7 @@ def gereciador_scraping():
         resultado = []
         for futuro in futuros:
             try:
-                dados, fabricante = futuro.result(timeout=120)
+                dados, fabricante = futuro.result(timeout=2000)
                 resultado.extend(dados)
             except Exception as e:
                 print(f"[MAIN] Erro ao processar scraper: {e}")
