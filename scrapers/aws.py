@@ -13,6 +13,7 @@ pesquisa_data = hoje.strftime("%d/%m/%Y")
 #pesquisa_data = '21/04/2025'
 ano_atual = hoje.year
 resultado = []
+fabricante = 'AWS'
 
 def scraper():
     print("Iniciando scraper AWS...")
@@ -91,6 +92,6 @@ def scraper():
     
     nav.quit()
     #print(resultado)
-    return resultado
+    return resultado, fabricante
     
 #scraper()

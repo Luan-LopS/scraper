@@ -10,7 +10,7 @@ import time
 hoje_str = date.today()
 hoje = hoje_str.strftime('%Y.%m.%d')
 ano = '2025'
-
+fabricante = 'HUAWEI'
 resultado = []
 
 def scraper():
@@ -91,6 +91,6 @@ def scraper():
     nav.quit()
 #    print(resultado)
     print("Finalizado scraper Huawei...")
-    return resultado
+    return resultado, fabricante
 
 #scraper()

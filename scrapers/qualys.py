@@ -8,6 +8,7 @@ from datetime import datetime #datas
 
 ULTIMA_CONSULTA = datetime.today()  # dia atual
 resultado=[]
+fabricante = 'QUALYS'
 
 def scraper():
     print("Iniciando scraper Qualys...")
@@ -84,6 +85,6 @@ def scraper():
     nav.quit()
 #    print(resultado)
     print("Finalizado scraper Qualys...")
-    return resultado
+    return resultado, fabricante
 
 #scraper()

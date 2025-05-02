@@ -10,6 +10,7 @@ hoje = date.today() # dia de hoje // 21 April 2025
 pesquisa_data =  hoje.strftime("%d %B %Y")
 ano_atual = hoje.year
 resultado = []
+fabricante = 'ORACLE'
 
 def scraper():
     print("Iniciando scraper oracle...")
@@ -84,6 +85,6 @@ def scraper():
     
     nav.quit()
 #    print(resultado)
-    return resultado
+    return resultado, fabricante
 
 #scraper()

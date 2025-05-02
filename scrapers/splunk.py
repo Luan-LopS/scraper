@@ -9,6 +9,7 @@ from datetime import datetime, date
 ULTIMA_CONSULTA = datetime(2025, 4, 10, 12, 0, 0)  # ano, mês, dia, hora, minuto, segundo TESTES
 hoje = str(date.today())
 resultado = []
+fabricante = 'SPLUK'
 
 def scraper():
     print("Iniciando scraper splunk...")
@@ -96,7 +97,7 @@ def scraper():
     nav.quit()
 #    print(resultado)
 
-    return resultado
+    return resultado, fabricante
 
 
 #scraper()

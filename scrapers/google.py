@@ -11,6 +11,7 @@ hoje = date.today() # dia de hoje
 pesquisa_data = hoje.strftime("%d/%m/%Y")
 #pesquisa_data = '25/04/2025'
 resultado = []
+fabricante = 'GOOGLE'
 
 def scraper():
     print("Iniciando scraper google...")
@@ -82,6 +83,6 @@ def scraper():
     
     nav.quit()
     #print(resultado)
-    return resultado
+    return resultado, fabricante
 
 #scraper()

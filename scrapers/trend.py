@@ -25,6 +25,7 @@ MES = {
 resultado = []
 ontem = datetime.now() - timedelta(days=1)
 ULTIMA_CONSULTA = ontem.strftime("%Y-%m-%dT%H:%M:%S")
+fabricante = 'TREND MICRO'
 print(ULTIMA_CONSULTA)
 
 def scraper():
@@ -112,6 +113,6 @@ def scraper():
     #print(resultado)
     print("Finalizado scraper Trend...")
 
-    return resultado
+    return resultado, fabricante
 
 #scraper()

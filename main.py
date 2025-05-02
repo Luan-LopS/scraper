@@ -1,10 +1,11 @@
-import os # serve para trabalhar como arquivos/pasta de maquina
+import os# serve para trabalhar como arquivos/pasta de maquina
+import sys
 import pandas as pd #trabalhar com o excel 
 from datetime import datetime # trabalhar com datas
 import schedule # agendar execução
 import time # sleep
 from multiprocessing import freeze_support #Processar em paralelo
-from scrapers import palo_alto, splunk, qualys, trend, huawei, aws, google, oragle # importa scrapers
+from scrapers import palo_alto, splunk, qualys, trend, huawei, aws, google, oragle, dynatrace, ibm # importa scrapers
 import concurrent.futures 
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -32,10 +33,20 @@ def enviar_teams(mensagem, webhook_url):
 # Exemplo de uso
 
 def enviar_email(resultado, excel_buffer):
-    load_dotenv(find_dotenv())
+    if getattr(sys, 'frozen', False):  # executável
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+
+    dotenv_path = os.path.join(base_path, '.env')
+    load_dotenv(dotenv_path)
     
     username = os.getenv('EMAIL_USER')
     senha = os.getenv('EMAIL_PASSWORD')
+
+    if not username or not senha:
+        print('erro')
+
     smtp_server = 'smtp.gmail.com'
     smtp_port = 465
     destinatarios = ['luan.siqueira@compwire.com.br','vinicius.clemente@compwire.com.br', '']
@@ -65,8 +76,7 @@ def enviar_email(resultado, excel_buffer):
         print('Erro ao enviar e-mail:', e)
 
 
-
-def gerandor_relatorio(resultado):
+def gerandor_relatorio(resultado, fabricante):
     print("Iniciando relatorio...")
 
     excel = pd.DataFrame(resultado) 
@@ -77,7 +87,7 @@ def gerandor_relatorio(resultado):
 
     buffer = BytesIO()
     with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-        excel.to_excel(writer, index=False, sheet_name='CVES')
+        excel.to_excel(writer, index=False, sheet_name=fabricante)
     buffer.seek(0)
 
     print("Relatório pronto. Enviando por e-mail...")
@@ -85,8 +95,7 @@ def gerandor_relatorio(resultado):
 
 
 def gereciador_scraping():
-    
-    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
 
         futuros = [
             executor.submit(palo_alto.scraper),
@@ -96,23 +105,24 @@ def gereciador_scraping():
             executor.submit(huawei.scraper),
             executor.submit(aws.scraper),
             executor.submit(google.scraper),
-            executor.submit(oragle.scraper)
-            
+            executor.submit(oragle.scraper),
+            executor.submit(dynatrace.scraper),
+            executor.submit(ibm.scraper)
         ]
 
         resultado = []
         for futuro in futuros:
             try:
-                dados = futuro.result(timeout=80)
+                dados, fabricante = futuro.result(timeout=120)
                 resultado.extend(dados)
             except Exception as e:
                 print(f"[MAIN] Erro ao processar scraper: {e}")
 
     if resultado:
-        gerandor_relatorio(resultado)
+        gerandor_relatorio(resultado, fabricante)
     else:
         print("[MAIN] Nenhum resultado encontrado.")
-        gerandor_relatorio(resultado)
+        gerandor_relatorio(resultado, fabricante)
 
 schedule.every(4).hours.do(gereciador_scraping)
 

@@ -9,6 +9,7 @@ from datetime import datetime #datas
 
 ULTIMA_CONSULTA = datetime.today() # dia de hoje 
 resultado = []
+fabricante ='PALO ALTO'
 
 def scraper():
     print("Iniciando scraper Palo Alto...")
@@ -86,6 +87,6 @@ def scraper():
     
     nav.quit()
 #    print(resultado)
-    return resultado
+    return resultado, fabricante
     
 #scraper()
