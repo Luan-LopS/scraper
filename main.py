@@ -11,16 +11,24 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 from io import BytesIO
 from xlsxwriter import Workbook
 import requests
 
-webhook_url = "https://compwirecombr.webhook.office.com/webhookb2/446415a8-43f6-4b9f-9fef-1701fe1fb814@4459998e-7581-4529-973d-e4738fe9a2a9/IncomingWebhook/8b137d6764374128836390171a438279/f87bd603-b64d-46e1-a813-4310327057dd/V2H1BBBzX7OUNFNMa5oq7ZTsbNFksd9AkG1B1f6ut688w1"
-mensagem = "✅ Scraping e envio de e-mail concluídos com sucesso!"
- 
+if getattr(sys, 'frozen', False):  # executável
+    base_path = sys._MEIPASS
+else:
+    base_path = os.path.abspath(".")
 
-def enviar_teams(mensagem, webhook_url):
+dotenv_path = os.path.join(base_path, '.env')
+load_dotenv(dotenv_path)
+    
+username = os.getenv('EMAIL_USER')
+senha = os.getenv('EMAIL_PASSWORD')
+webhook_url = os.getenv('WEBHOOK_URL')
+
+def enviar_teams(mensagem):
     payload = {"text": mensagem}
     headers = {"Content-Type": "application/json"}
     response = requests.post(webhook_url, json=payload, headers=headers)
@@ -33,23 +41,14 @@ def enviar_teams(mensagem, webhook_url):
 # Exemplo de uso
 
 def enviar_email(resultado, excel_buffer):
-    if getattr(sys, 'frozen', False):  # executável
-        base_path = sys._MEIPASS
-    else:
-        base_path = os.path.abspath(".")
-
-    dotenv_path = os.path.join(base_path, '.env')
-    load_dotenv(dotenv_path)
     
-    username = os.getenv('EMAIL_USER')
-    senha = os.getenv('EMAIL_PASSWORD')
 
     if not username or not senha:
         print('erro')
 
     smtp_server = 'smtp.gmail.com'
     smtp_port = 465
-    destinatarios = ['luan.siqueira@compwire.com.br','vinicius.clemente@compwire.com.br', '']
+    destinatarios = ['luan.siqueira@compwire.com.br','vinicius.clemente@compwire.com.br']
     assunto = 'CVES'
     corpo = f"Segue relatios de cves do dia de hoje: {len(resultado)}"
 
@@ -71,24 +70,27 @@ def enviar_email(resultado, excel_buffer):
             srv.send_message(msg)
             print('Email enviado')
 
-        enviar_teams(mensagem, webhook_url)
+        enviar_teams(corpo)
     except Exception as e:
         print('Erro ao enviar e-mail:', e)
 
 
-def gerandor_relatorio(resultado, fabricante):
+def gerador_relatorio(resultado, fabricantes):
     print("Iniciando relatorio...")
 
     excel = pd.DataFrame(resultado) 
 
     colunas=['data', 'titulo', 'descrição', 'urgencia', 'link']
-    if not all (col in excel.columns for col in colunas):
-        excel = excel.reindex(columns=colunas)
+    for col in colunas:
+        if col not in excel.columns:
+            excel[col] = None
 
     buffer = BytesIO()
+
     with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-        for fab in fabricante:
-        excel.to_excel(writer, index=False, sheet_name=fabricante)
+        for fabricante in fabricantes:
+            df_filtro = excel[excel['fabricante'] == fabricante]
+            df_filtro.to_excel(writer, index=False, sheet_name=fabricante[:31])
     buffer.seek(0)
 
     print("Relatório pronto. Enviando por e-mail...")
@@ -112,18 +114,24 @@ def gereciador_scraping():
         ]
 
         resultado = []
+        fabricantes = []
         for futuro in futuros:
             try:
                 dados, fabricante = futuro.result(timeout=2000)
+
+                for item in dados:
+                    item['fabricante'] = fabricante
+
                 resultado.extend(dados)
+                fabricantes.append(fabricante)
             except Exception as e:
                 print(f"[MAIN] Erro ao processar scraper: {e}")
 
     if resultado:
-        gerandor_relatorio(resultado, fabricante)
+        gerador_relatorio(resultado, fabricantes)
     else:
         print("[MAIN] Nenhum resultado encontrado.")
-        gerandor_relatorio(resultado, fabricante)
+        gerador_relatorio(resultado, fabricantes)
 
 schedule.every(4).hours.do(gereciador_scraping)
 

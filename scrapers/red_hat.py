@@ -14,21 +14,37 @@ ano_atual = hoje.year
 resultado = []
 
 def scraper():
-    print("Iniciando scraper IBM...")
+    print("Iniciando scraper RED HAT...")
     options = Options()
     #options.add_argument('--headless')  # Não abre o navegador
     options.add_argument('--start-maximized')
     nav = webdriver.Chrome(options=options)
     paginas = [
-        "https://access.redhat.com/security/"
+        "https://access.redhat.com/security/",
+        "https://access.redhat.com/security/security-updates/cve?q=&p=1&sort=cve_publicDate+desc,allTitle+desc&rows=100&documentKind=Cve"
     ]
 
     for pagina in paginas:
         nav.get(pagina)        
-        '''
+
         WebDriverWait(nav, 10).until(
-                    EC.presence_of_element_located((By.ID, "datatable"))
+            EC.visibility_of_element_located((By.XPATH, '/html/body/div[3]/div'))
         )
+
+        iframe1 = WebDriverWait(nav, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "truste_popframe"))
+        )
+        nav.switch_to.frame(iframe1)
+
+        WebDriverWait(nav, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//div[@class="pdynamicbutton"]/a[2]'))
+        )
+
+        nav.find_element(By.XPATH, '//div[@class="pdynamicbutton"]/a[2]').click()
+        sleep(20)
+
+
+        '''
        
         quantidade_linha = nav.find_element(By.XPATH, '//*[@id="datatable_length"]/label/select')
         select = Select(quantidade_linha)

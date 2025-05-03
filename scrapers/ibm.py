@@ -35,7 +35,7 @@ def scraper():
         select.select_by_visible_text('100')
         
         i = 0
-        dt = None
+        dt = pesquisa_data
         titulo = None
         urgencia = None
         descricao = None
@@ -64,7 +64,7 @@ def scraper():
                     EC.presence_of_element_located((By.CLASS_NAME, 'bx--row'))
                 )
 
-                descricao = nav.find_element(By.XPATH, '//*[@id="com.dblue.docview.body.content"]/div/div/div/div[1]/p')
+                descricao = nav.find_element(By.XPATH, '//*[@id="com.dblue.docview.body.content"]/div/div/div/div[1]/p').text
                 pag = nav.current_url
                 nav.back()
                     
@@ -79,7 +79,7 @@ def scraper():
                 result = {
                     'data': dt,
                     'titulo' :titulo,
-                    'descição': descricao,
+                    'descrição': descricao,
                     'urgencia': urgencia,
                     'link': pag
                     }
