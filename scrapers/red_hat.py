@@ -8,19 +8,23 @@ from datetime import date #datas
 from time import sleep
 
 hoje = date.today() # dia de hoje 
-pesquisa_data = hoje.strftime("%Y-%m-%d")
-#pesquisa_data = '21/04/2025'
-ano_atual = hoje.year
+pesquisa_data = hoje.strftime("%d/%m/%Y")
+print(pesquisa_data)
+
 resultado = []
+fabricante = 'RED HAT'
+
+
+#    "https://access.redhat.com/security/",
+
 
 def scraper():
     print("Iniciando scraper RED HAT...")
     options = Options()
-    #options.add_argument('--headless')  # Não abre o navegador
-    options.add_argument('--start-maximized')
+    options.add_argument('--headless')  # Não abre o navegador
+    #options.add_argument('--start-maximized')
     nav = webdriver.Chrome(options=options)
     paginas = [
-        "https://access.redhat.com/security/",
         "https://access.redhat.com/security/security-updates/cve?q=&p=1&sort=cve_publicDate+desc,allTitle+desc&rows=100&documentKind=Cve"
     ]
 
@@ -41,85 +45,63 @@ def scraper():
         )
 
         nav.find_element(By.XPATH, '//div[@class="pdynamicbutton"]/a[2]').click()
-        sleep(20)
 
-
-        '''
+        WebDriverWait(nav, 10).until(
+            EC.visibility_of_element_located((By.ID, 'cve-db-table'))
+        )
        
-        quantidade_linha = nav.find_element(By.XPATH, '//*[@id="datatable_length"]/label/select')
-        select = Select(quantidade_linha)
-        select.select_by_visible_text('100')
+        datas = nav.find_elements(By.XPATH, '//*[@id="cve-db-table"]/cp-tbody/cp-tr/cp-td[3]')
         
+        controle=[]
+        for data in datas:
+            if data.text == pesquisa_data:
+                controle.append(data)
+        sleep(2)
+
         i = 0
-        dt = None
         titulo = None
         urgencia = None
         descricao = None
         pag = None
-        cont = 0
+
 
         while True:
-            try:   
-                # Atualiza a lista de datas
-                datas = nav.find_elements(By.XPATH, f"//*[@id='datatable']/tbody/tr/td[5][contains(text(), '{pesquisa_data}')]")
-                if cont == 0:
-                    cont = len(datas)
-                print(f"Cont {cont}" )
-                print(f"Datas {len(datas)}" )
-                print(f"I {i}" )
-
-                if i >= cont:
+            try:
+                if i >= len(controle):
                     break
-                                   
-                data = datas[i]
-                urgencia = data.find_element(By.XPATH, "preceding-sibling::td[1]").text
-                titulo = data.find_element(By.XPATH, 'preceding-sibling::td[4]').text
-                link = data.find_element(By.XPATH, 'preceding-sibling::td[4]/a')
-                nav.execute_script("arguments[0].removeAttribute('target')", link)
-                nav.execute_script("arguments[0].click();", link)
+                
+                data = controle[i]
+                linha = nav.find_element(By.XPATH, f'//*[@id="cve-db-table"]/cp-tbody/cp-tr[{i+1}]')
+                titulo = linha.find_element(By.XPATH,'./cp-th')
+                descricao = linha.find_element(By.XPATH, './cp-td[1]').text
+                urgencia = linha.find_element(By.XPATH,'./cp-td[2]').text
+                data = linha.find_element(By.XPATH, './cp-td[3]').text
 
-                WebDriverWait(nav, 10).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, 'bx--row'))
-                )
+                
+                pag = titulo.find_element(By.XPATH, './a').text
 
-                descricao = nav.find_element(By.XPATH, '//*[@id="com.dblue.docview.body.content"]/div/div/div/div[1]/p')
-                pag = nav.current_url
-                nav.back()
-                    
-                WebDriverWait(nav, 10).until(
-                    EC.presence_of_element_located((By.ID, "datatable"))
-                )
-
-                quantidade_linha = nav.find_element(By.XPATH, '//*[@id="datatable_length"]/label/select')
-                select = Select(quantidade_linha)
-                select.select_by_visible_text('100')
 
                 result = {
-                    'data': dt,
-                    'titulo' :titulo,
-                    'descição': descricao,
-                    'urgencia': urgencia,
-                    'link': pag
-                    }
-                    
-                resultado.append(result)
-                
-                i += 1                    
+                        'data': pesquisa_data,
+                        'titulo' :titulo.text,
+                        'descrição': descricao,
+                        'urgencia': urgencia,
+                        'link': pag
+                }
 
-                if i >= len(datas):
-                    pagina = nav.find_element(By.XPATH, '//*[@id="datatable_next"]')
-                    pagina.click()
-                    cont += len(datas)
+                resultado.append(result)
+
+                i+=1
 
             except (StaleElementReferenceException, NoSuchElementException, IndexError) as e:
                 print(f"Erro com o elemento ou índice fora do alcance: {e}. Continuando.")
                 i += 1
                 continue
 
-    print("Finalizando scraper IBM.")
+    print("Finalizando scraper RED HAT.")
     
     nav.quit()
-    print(resultado)
-    return resultado
-'''
-scraper()
+    #print(resultado)
+    return resultado, fabricante
+    
+#scraper()

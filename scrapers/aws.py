@@ -75,7 +75,7 @@ def scraper():
                 result = {
                     'data': dt,
                     'titulo' :titulo,
-                    'descição': descricao,
+                    'descrição': descricao,
                     'urgencia': None,
                     'link': pag
                     }

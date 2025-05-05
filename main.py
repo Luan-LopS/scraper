@@ -5,7 +5,7 @@ from datetime import datetime # trabalhar com datas
 import schedule # agendar execução
 import time # sleep
 from multiprocessing import freeze_support #Processar em paralelo
-from scrapers import palo_alto, splunk, qualys, trend, huawei, aws, google, oragle, dynatrace, ibm # importa scrapers
+from scrapers import palo_alto, splunk, qualys, trend, huawei, aws, google, oragle, dynatrace, ibm, red_hat # importa scrapers
 import concurrent.futures 
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -41,7 +41,6 @@ def enviar_teams(mensagem):
 # Exemplo de uso
 
 def enviar_email(resultado, excel_buffer):
-    
 
     if not username or not senha:
         print('erro')
@@ -98,7 +97,7 @@ def gerador_relatorio(resultado, fabricantes):
 
 
 def gereciador_scraping():
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
 
         futuros = [
             executor.submit(palo_alto.scraper),
@@ -110,7 +109,8 @@ def gereciador_scraping():
             executor.submit(google.scraper),
             executor.submit(oragle.scraper),
             executor.submit(dynatrace.scraper),
-            executor.submit(ibm.scraper)
+            executor.submit(ibm.scraper),
+            executor.submit(red_hat.scraper)
         ]
 
         resultado = []
