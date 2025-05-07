@@ -115,4 +115,4 @@ def scraper():
     #print(resultado)
     return resultado, fabricante
 
-#scraper()
+scraper()
