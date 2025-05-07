@@ -47,9 +47,16 @@ def enviar_email(resultado, excel_buffer):
 
     smtp_server = 'smtp.gmail.com'
     smtp_port = 465
-    destinatarios = ['luan.siqueira@compwire.com.br','vinicius.clemente@compwire.com.br']
+    destinatarios = ['luan.siqueira@compwire.com.br','vinicius.clemente@compwire.com.br','thiago.mendes@compwire.com.br','fabio.aquino@compwire.com.br']
     assunto = 'CVES'
-    corpo = f"Segue relatios de cves do dia de hoje: {len(resultado)}"
+    corpo = f'''
+    Olá,
+
+    Segue em anexo o relatório de CVEs identificados no dia de hoje, totalizando {len(resultado)} ocorrências.
+
+    Por favor, revise as informações e, se necessário, acione os responsáveis pelas tratativas conforme a criticidade dos registros.
+
+    Qualquer dúvida, estou à disposição.'''
 
     msg = MIMEMultipart()
     msg["From"] = username

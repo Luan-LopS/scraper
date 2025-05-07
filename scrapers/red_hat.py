@@ -10,13 +10,9 @@ from time import sleep
 hoje = date.today() # dia de hoje 
 pesquisa_data = hoje.strftime("%d/%m/%Y")
 print(pesquisa_data)
-
 resultado = []
 fabricante = 'RED HAT'
-
-
 #    "https://access.redhat.com/security/",
-
 
 def scraper():
     print("Iniciando scraper RED HAT...")
@@ -31,7 +27,7 @@ def scraper():
     for pagina in paginas:
         nav.get(pagina)        
 
-        WebDriverWait(nav, 10).until(
+        WebDriverWait(nav, 20).until(
             EC.visibility_of_element_located((By.XPATH, '/html/body/div[3]/div'))
         )
 
@@ -56,14 +52,13 @@ def scraper():
         for data in datas:
             if data.text == pesquisa_data:
                 controle.append(data)
-        sleep(2)
+        sleep(1)
 
         i = 0
         titulo = None
         urgencia = None
         descricao = None
         pag = None
-
 
         while True:
             try:
@@ -76,8 +71,6 @@ def scraper():
                 descricao = linha.find_element(By.XPATH, './cp-td[1]').text
                 urgencia = linha.find_element(By.XPATH,'./cp-td[2]').text
                 data = linha.find_element(By.XPATH, './cp-td[3]').text
-
-                
                 pag = titulo.find_element(By.XPATH, './a').text
 
 

@@ -23,6 +23,10 @@ def scraper():
     for pagina in paginas:
         nav.get(pagina)
         
+        WebDriverWait(nav, 10).until(
+            EC.presence_of_all_elements_located((By.XPATH, '//*[@id="content_1_divBulletinsList"]/div[1]/div[1]/dl/dd[2]/ul[1]/li[1]/p'))
+        )
+
         i = 0
         dt = None
         titulo = None

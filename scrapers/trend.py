@@ -39,7 +39,7 @@ def scraper():
 
     for pagina in paginas:
         nav.get(pagina)
-        WebDriverWait(nav, 10).until(
+        WebDriverWait(nav, 20).until(
             EC.presence_of_all_elements_located((By.CLASS_NAME, "descTitle"))
         )
     

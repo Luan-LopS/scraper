@@ -25,7 +25,7 @@ def scraper():
         nav.get(pagina)
 
 
-        WebDriverWait(nav, 10).until(
+        WebDriverWait(nav, 20).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="advisory-table-all_wrapper"]/div[2]/div[1]/div/div[2]/button'))
         )   
 

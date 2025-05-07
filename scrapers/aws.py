@@ -26,7 +26,12 @@ def scraper():
     ]
 
     for pagina in paginas:
-        nav.get(pagina)        
+        nav.get(pagina)    
+        
+        WebDriverWait(nav, 20).until(
+            EC.presence_of_all_elements_located((By.XPATH, f"//input[@type='checkbox' and @value='{ano_atual}']"))
+        )   
+
         ano_click = nav.find_element(By.XPATH, f"//input[@type='checkbox' and @value='{ano_atual}']")
         ano_click.click()
       
