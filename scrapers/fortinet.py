@@ -3,11 +3,10 @@
 from  selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException
+from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException, TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime, date #datas
-from time import sleep
 
 hoje = date.today() 
 pesquisa_data = hoje.strftime("%b %d,%Y")
@@ -36,7 +35,6 @@ def scraper():
         ano_click = nav.find_element(By.XPATH, f'//*[@id="full-page"]/section[2]/div/div[1]/div/form/div/div[3]/div/span[2]/span[1]/span')
         ano_click.send_keys(ano_atual)
         ano_click.send_keys('\ue004')
-
         
         i = 0
         dt = None
@@ -46,12 +44,12 @@ def scraper():
         pag = None
 
         while True:
-            #try:
-                WebDriverWait(nav, 10).until(
-                    EC.presence_of_element_located((By.XPATH, '//*[@id="full-page"]/section[3]/div/div[1]/div[4][contains(., "Apr 23, 2025")]'))
+            try:
+                WebDriverWait(nav, 15).until(
+                    EC.presence_of_element_located((By.XPATH, f'//*[@id="full-page"]/section[3]/div/div/div[4][contains(., "{pesquisa_data}")]'))
                 )
-                # Atualiza a lista de datas
-                datas = nav.find_elements(By.XPATH, f'//*[@id="full-page"]/section[3]/div/div[1]/div[4][contains(., "Apr 23, 2025")]')
+
+                datas = nav.find_elements(By.XPATH, f'//*[@id="full-page"]/section[3]/div/div/div[4][contains(., "{pesquisa_data}")]')
                 if i >= len(datas):
                     break
 
@@ -59,11 +57,7 @@ def scraper():
                 urgencia = data.find_element(By.XPATH, './following-sibling::div[4]').text
                 descricao = data.find_element(By.XPATH, './preceding-sibling::div[2]').text
                 titulo = data.find_element(By.XPATH, './preceding-sibling::div[3]').text
-                link = data.find_element(By.XPATH, './preceding-sibling::div[3]')
-            
-
-                '''
-                link = div_pai.find_element(By.XPATH, '//section//ul/li[1]//a')
+                link = data.find_element(By.XPATH, '//*[@id="full-page"]/section[3]/div/div[1]')
                 nav.execute_script("arguments[0].removeAttribute('target')", link)
                 nav.execute_script("arguments[0].click();", link)
 
@@ -71,25 +65,23 @@ def scraper():
                     EC.presence_of_element_located((By.CLASS_NAME, 'title'))
                 )
 
-                titulo = nav.find_element(By.CLASS_NAME,'title').text
-
-                descricao = nav.find_element(By.XPATH, '//section//div[3]/div').text
-                #urgencia = nav.find_element(By.XPATH, '/html/body/div[1]/h3[4]').text
                 pag = nav.current_url
+
                 nav.back()
-                    
+
                 WebDriverWait(nav, 10).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, "m-card-title"))
+                    EC.presence_of_all_elements_located((By.CLASS_NAME, "container-xxl"))
                 )
 
-                ano_click = nav.find_element(By.XPATH, f"//input[@type='checkbox' and @value='{ano_atual}']")
-                ano_click.click()
+                ano_click = nav.find_element(By.XPATH, f'//*[@id="full-page"]/section[2]/div/div[1]/div/form/div/div[3]/div/span[2]/span[1]/span')
+                ano_click.send_keys(ano_atual)
+                ano_click.send_keys('\ue004')
 
                 result = {
                     'data': dt,
                     'titulo' :titulo,
                     'descrição': descricao,
-                    'urgencia': None,
+                    'urgencia': urgencia,
                     'link': pag
                     }
                     
@@ -101,10 +93,15 @@ def scraper():
                 i += 1
                 continue
 
+            except TimeoutException as error:
+                print("Elemento não existente")
+                break
+
+
     print("Finalizando scraper FORTINET.")
     
     nav.quit()
     #print(resultado)
     return resultado, fabricante
-    '''
-scraper()
+    
+#scraper()

@@ -5,7 +5,7 @@ from datetime import datetime # trabalhar com datas
 import schedule # agendar execução
 import time # sleep
 from multiprocessing import freeze_support #Processar em paralelo
-from scrapers import palo_alto, splunk, qualys, trend, huawei, aws, google, oragle, dynatrace, ibm, red_hat # importa scrapers
+from scrapers import palo_alto, splunk, qualys, trend, huawei, aws, google, oragle, dynatrace, ibm, red_hat, fortinet, veeam # importa scrapers
 import concurrent.futures 
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -53,7 +53,7 @@ def enviar_email(resultado, excel_buffer):
     Olá,
 
     Segue em anexo o relatório de CVEs identificados no dia de hoje, totalizando {len(resultado)} ocorrências.
-
+    
     Por favor, revise as informações e, se necessário, acione os responsáveis pelas tratativas conforme a criticidade dos registros.
 
     Qualquer dúvida, estou à disposição.'''
@@ -80,7 +80,6 @@ def enviar_email(resultado, excel_buffer):
     except Exception as e:
         print('Erro ao enviar e-mail:', e)
 
-
 def gerador_relatorio(resultado, fabricantes):
     print("Iniciando relatorio...")
 
@@ -102,22 +101,27 @@ def gerador_relatorio(resultado, fabricantes):
     print("Relatório pronto. Enviando por e-mail...")
     enviar_email(resultado, buffer)
 
-
 def gereciador_scraping():
     with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
 
         futuros = [
-            executor.submit(palo_alto.scraper),
-            executor.submit(splunk.scraper),
-            executor.submit(qualys.scraper),
-            executor.submit(trend.scraper),
-            executor.submit(huawei.scraper),
-            executor.submit(aws.scraper),
-            executor.submit(google.scraper),
-            executor.submit(oragle.scraper),
-            executor.submit(dynatrace.scraper),
-            executor.submit(ibm.scraper),
-            executor.submit(red_hat.scraper)
+            executor.submit(palo_alto.scraper),  #1
+            executor.submit(splunk.scraper),     #2
+            executor.submit(qualys.scraper),     #3
+            executor.submit(trend.scraper),      #4
+            executor.submit(huawei.scraper),     #5
+            executor.submit(aws.scraper),        #6
+            executor.submit(google.scraper),     #7
+            executor.submit(oragle.scraper),     #8
+            executor.submit(dynatrace.scraper),  #9
+            executor.submit(ibm.scraper),        #10
+            executor.submit(red_hat.scraper),    #11
+            executor.submit(fortinet.scraper),   #12
+            executor.submit(veeam.scraper)       #13
+            # ivant                              #14
+            # CloudFlare api                     #15
+            # Apura não tem site                 #16
+            # Cloudera cadastrar                 #17   
         ]
 
         resultado = []
