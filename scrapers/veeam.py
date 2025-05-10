@@ -16,7 +16,8 @@ resultado = []
 def scraper():
     print("Iniciando scraper Veeam...")
     options = Options()
-    options.add_argument("--start-maximized") 
+    options.add_argument('--headless')  # Não abre o navegador
+    #options.add_argument("--start-maximized") 
     nav = webdriver.Chrome(options=options)
     paginas = [
         "https://www.veeam.com/kb"

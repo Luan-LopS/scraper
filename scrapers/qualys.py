@@ -40,7 +40,6 @@ def scraper():
                 data = datas[i]
                 data_time = datetime.strptime(data.text,"%b %d, %Y")
                 dt = data_time.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]+"000Z" 
-                dt_formatado = ULTIMA_CONSULTA.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
                
                 if data_time > ULTIMA_CONSULTA:
                     div = nav.find_element(By.CLASS_NAME, "q-grid__inner") # q-advisories__container-inner

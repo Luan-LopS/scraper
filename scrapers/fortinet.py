@@ -18,8 +18,8 @@ fabricante = 'FORTINET'
 def scraper():
     print("Iniciando scraper FORTINET...")
     options = Options()
-    #options.add_argument('--headless')  # Não abre o navegador
-    options.add_argument('--start-maximized')
+    options.add_argument('--headless')  # Não abre o navegador
+    #options.add_argument('--start-maximized')
     nav = webdriver.Chrome(options=options)
     paginas = [
         "https://www.fortiguard.com/psirt"
