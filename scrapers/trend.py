@@ -32,6 +32,8 @@ def scraper():
     print("Iniciando scraper Trend...")
     options = Options()
     options.add_argument('--headless')  # Não abre o navegador
+    options.add_argument('--disable-gpu')  # Necessário em alguns ambientes Windows
+    options.add_argument('--no-sandbox')
     nav = webdriver.Chrome(options=options)
     paginas = [
             "https://www.trendmicro.com/vinfo/br/threat-encyclopedia/vulnerability/all-vulnerabilities"

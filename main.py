@@ -118,7 +118,7 @@ def gereciador_scraping():
             executor.submit(red_hat.scraper),    #11
             executor.submit(fortinet.scraper),   #12
             executor.submit(veeam.scraper)       #13
-            # ivant                              #14
+            # ivant cadastrar                    #14
             # CloudFlare api                     #15
             # Apura não tem site                 #16
             # Cloudera cadastrar                 #17   

@@ -15,6 +15,8 @@ def scraper():
     print("Iniciando scraper Palo Alto...")
     options = Options()
     options.add_argument('--headless')  # Não abre o navegador
+    options.add_argument('--disable-gpu')  # Necessário em alguns ambientes Windows
+    options.add_argument('--no-sandbox')
     nav = webdriver.Chrome(options=options)
     paginas = [
         "https://security.paloaltonetworks.com/?sort=-date",

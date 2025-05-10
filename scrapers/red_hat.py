@@ -17,8 +17,10 @@ fabricante = 'RED HAT'
 def scraper():
     print("Iniciando scraper RED HAT...")
     options = Options()
-    options.add_argument('--headless')  # Não abre o navegador
-    #options.add_argument('--start-maximized')
+    #options.add_argument('--headless')  # Não abre o navegador
+    options.add_argument('--start-maximized')
+    options.add_argument('--disable-gpu')  # Necessário em alguns ambientes Windows
+    options.add_argument('--no-sandbox')
     nav = webdriver.Chrome(options=options)
     paginas = [
         "https://access.redhat.com/security/security-updates/cve?q=&p=1&sort=cve_publicDate+desc,allTitle+desc&rows=100&documentKind=Cve"
@@ -71,7 +73,7 @@ def scraper():
                 descricao = linha.find_element(By.XPATH, './cp-td[1]').text
                 urgencia = linha.find_element(By.XPATH,'./cp-td[2]').text
                 data = linha.find_element(By.XPATH, './cp-td[3]').text
-                pag = titulo.find_element(By.XPATH, './a').text
+                pag = titulo.find_element(By.XPATH, './a')
 
 
                 result = {
