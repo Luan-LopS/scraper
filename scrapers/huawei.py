@@ -5,7 +5,6 @@ from selenium.common.exceptions import StaleElementReferenceException, NoSuchEle
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime, date
-import time 
 
 hoje_str = date.today()
 hoje = hoje_str.strftime('%Y.%m.%d')
@@ -14,10 +13,10 @@ fabricante = 'HUAWEI'
 resultado = []
 
 def scraper():
+    print("Iniciando scraper Huawei...")
     options = Options()
-    options.add_argument('--headless')  # Não abre o navegador
-    options.add_argument('--disable-gpu')  # Necessário em alguns ambientes Windows
-    options.add_argument('--no-sandbox')
+    options.add_argument('--headless')
+
     nav = webdriver.Chrome(options=options)
     paginas = [
         "https://www.huawei.com/br/psirt/all-bulletins"
@@ -25,7 +24,7 @@ def scraper():
     for pagina in paginas:
         nav.get(pagina)
         
-        WebDriverWait(nav, 10).until(
+        WebDriverWait(nav, 20).until(
             EC.presence_of_all_elements_located((By.XPATH, '//*[@id="content_1_divBulletinsList"]/div[1]/div[1]/dl/dd[2]/ul[1]/li[1]/p'))
         )
 

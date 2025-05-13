@@ -5,7 +5,7 @@ from selenium.common.exceptions import StaleElementReferenceException, NoSuchEle
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime, timedelta #datas
-import time
+
 
 MES = {
     "janeiro": "01",
@@ -31,9 +31,8 @@ print(ULTIMA_CONSULTA)
 def scraper():
     print("Iniciando scraper Trend...")
     options = Options()
-    options.add_argument('--headless')  # Não abre o navegador
-    options.add_argument('--disable-gpu')  # Necessário em alguns ambientes Windows
-    options.add_argument('--no-sandbox')
+    options.add_argument('--headless')
+    
     nav = webdriver.Chrome(options=options)
     paginas = [
             "https://www.trendmicro.com/vinfo/br/threat-encyclopedia/vulnerability/all-vulnerabilities"

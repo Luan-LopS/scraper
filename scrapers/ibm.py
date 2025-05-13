@@ -16,9 +16,8 @@ fabricante = 'IBM'
 def scraper():
     print("Iniciando scraper IBM...")
     options = Options()
-    options.add_argument('--headless')  # Não abre o navegador
-    options.add_argument('--disable-gpu')  # Necessário em alguns ambientes Windows
-    options.add_argument('--no-sandbox')
+    options.add_argument('--headless')
+
     #options.add_argument('--start-maximized')
     nav = webdriver.Chrome(options=options)
     paginas = [
@@ -32,7 +31,11 @@ def scraper():
                     EC.presence_of_element_located((By.ID, "datatable"))
         )
        
-        quantidade_linha = nav.find_element(By.XPATH, '//*[@id="datatable_length"]/label/select')
+        quantidade_linha = WebDriverWait(nav, 20).until(
+                    EC.visibility_of_element_located((By.XPATH, '//*[@id="datatable_length"]/label/select'))
+        )
+
+
         select = Select(quantidade_linha)
         select.select_by_visible_text('100')
         
@@ -74,7 +77,10 @@ def scraper():
                     EC.presence_of_element_located((By.ID, "datatable"))
                 )
 
-                quantidade_linha = nav.find_element(By.XPATH, '//*[@id="datatable_length"]/label/select')
+                quantidade_linha = WebDriverWait(nav, 15).until(
+                    EC.visibility_of_element_located((By.XPATH, '//*[@id="datatable_length"]/label/select'))
+                )
+
                 select = Select(quantidade_linha)
                 select.select_by_visible_text('100')
 
@@ -117,4 +123,4 @@ def scraper():
     #print(resultado)
     return resultado, fabricante
 
-scraper()
+#scraper()

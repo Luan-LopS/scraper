@@ -16,9 +16,8 @@ resultado = []
 def scraper():
     print("Iniciando scraper Veeam...")
     options = Options()
-    options.add_argument('--headless')  # Não abre o navegador
-    options.add_argument('--disable-gpu')  # Necessário em alguns ambientes Windows
-    options.add_argument('--no-sandbox')
+    options.add_argument('--headless')
+
     #options.add_argument("--start-maximized") 
     nav = webdriver.Chrome(options=options)
     paginas = [
@@ -39,7 +38,7 @@ def scraper():
         data_fim.send_keys(hoje)
 
         i = 0
-        dt = None
+        dt = hoje
         titulo = None
         descricao = None
         urgencia= None

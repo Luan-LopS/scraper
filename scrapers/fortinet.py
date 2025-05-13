@@ -18,10 +18,8 @@ fabricante = 'FORTINET'
 def scraper():
     print("Iniciando scraper FORTINET...")
     options = Options()
-    options.add_argument('--headless')  # Não abre o navegador
-    options.add_argument('--disable-gpu')  # Necessário em alguns ambientes Windows
-    options.add_argument('--no-sandbox')
-    #options.add_argument('--start-maximized')
+    options.add_argument('--headless')
+
     nav = webdriver.Chrome(options=options)
     paginas = [
         "https://www.fortiguard.com/psirt"
@@ -30,7 +28,7 @@ def scraper():
     for pagina in paginas:
         nav.get(pagina)        
 
-        WebDriverWait(nav, 10).until(
+        WebDriverWait(nav, 20).until(
             EC.presence_of_all_elements_located((By.CLASS_NAME, "container-xxl"))
         )
 

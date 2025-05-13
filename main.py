@@ -102,7 +102,7 @@ def gerador_relatorio(resultado, fabricantes):
     enviar_email(resultado, buffer)
 
 def gereciador_scraping():
-    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
 
         futuros = [
             executor.submit(palo_alto.scraper),  #1
@@ -144,7 +144,7 @@ def gereciador_scraping():
         print("[MAIN] Nenhum resultado encontrado.")
         gerador_relatorio(resultado, fabricantes)
 
-schedule.every(4).hours.do(gereciador_scraping)
+schedule.every(2).hours.do(gereciador_scraping)
 
 if __name__ == "__main__":
     gereciador_scraping()
