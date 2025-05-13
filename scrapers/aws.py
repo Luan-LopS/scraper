@@ -33,7 +33,8 @@ def scraper():
         )   
 
         ano_click = nav.find_element(By.XPATH, f"//input[@type='checkbox' and @value='{ano_atual}']")
-        ano_click.click()
+        nav.execute_script("arguments[0].removeAttribute('target')", ano_click)
+        nav.execute_script("arguments[0].click();", ano_click)
       
         WebDriverWait(nav, 10).until(
                     EC.presence_of_all_elements_located((By.CLASS_NAME, "m-card-title"))
@@ -99,4 +100,4 @@ def scraper():
     #print(resultado)
     return resultado, fabricante
     
-#scraper()
+scraper()

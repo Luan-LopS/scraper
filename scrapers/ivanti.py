@@ -13,10 +13,10 @@ pesquisa_data = hoje.strftime("%d/%m/%Y")
 #pesquisa_data = '21/04/2025'
 ano_atual = hoje.year
 resultado = []
-fabricante = 'AWS'
+fabricante = 'IVANTI'
 
 def scraper():
-    print("Iniciando scraper AWS...")
+    print("Iniciando scraper IVANTI...")
     options = Options()
     options.add_argument('--headless')
 
@@ -88,7 +88,7 @@ def scraper():
                 i += 1
                 continue
 
-    print("Finalizando scraper AWS.")
+    print("Finalizando scraper IVANTE.")
     
     nav.quit()
     #print(resultado)
