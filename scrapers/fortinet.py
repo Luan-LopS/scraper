@@ -11,7 +11,6 @@ from time import sleep
 
 hoje = date.today() 
 pesquisa_data = hoje.strftime("%b %d,%Y")
-print(pesquisa_data)
 ano_atual = hoje.year
 resultado = []
 fabricante = 'FORTINET'
@@ -45,7 +44,7 @@ def scraper():
 
         while True:
             try:
-                WebDriverWait(nav, 15).until(
+                WebDriverWait(nav, 10).until(
                     EC.presence_of_element_located((By.XPATH, f'//*[@id="full-page"]/section[3]/div/div/div[4][contains(., "{pesquisa_data}")]'))
                 )
 

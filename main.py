@@ -48,11 +48,11 @@ def enviar_email(resultado, excel_buffer):
 
     smtp_server = 'smtp.gmail.com'
     smtp_port = 465
-    destinatarios = ['luan.siqueira@compwire.com.br','vinicius.clemente@compwire.com.br','thiago.mendes@compwire.com.br','fabio.aquino@compwire.com.br']
+    destinatarios = ['luan.siqueira@compwire.com.br','vinicius.clemente@compwire.com.br','thiago.mendes@compwire.com.br','fabio.aquino@compwire.com.br', 'isaac.santos@compwire.com.br']
     assunto = 'CVES'
 
     corpo = html.html(str(len(resultado)))
-    
+
 
     msg = MIMEMultipart()
     msg["From"] = username
@@ -89,9 +89,12 @@ def gerador_relatorio(resultado, fabricantes):
     buffer = BytesIO()
 
     with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+
         for fabricante in fabricantes:
             df_filtro = excel[excel['fabricante'] == fabricante]
-            df_filtro.to_excel(writer, index=False, sheet_name=fabricante[:31])
+            
+            remove_dupicados = df_filtro.drop_duplicates(subset=['descrição', 'data'])
+            remove_dupicados.to_excel(writer, index=False, sheet_name=fabricante[:31])
     buffer.seek(0)
 
     print("Relatório pronto. Enviando por e-mail...")

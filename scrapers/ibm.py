@@ -31,7 +31,7 @@ def scraper():
                     EC.presence_of_element_located((By.ID, "datatable"))
         )
        
-        quantidade_linha = WebDriverWait(nav, 20).until(
+        quantidade_linha = WebDriverWait(nav, 10).until(
                     EC.visibility_of_element_located((By.XPATH, '//*[@id="datatable_length"]/label/select'))
         )
 
@@ -123,4 +123,4 @@ def scraper():
     #print(resultado)
     return resultado, fabricante
 
-scraper()
+#scraper()
