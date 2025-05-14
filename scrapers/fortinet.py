@@ -7,6 +7,7 @@ from selenium.common.exceptions import StaleElementReferenceException, NoSuchEle
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime, date #datas
+from time import sleep
 
 hoje = date.today() 
 pesquisa_data = hoje.strftime("%b %d,%Y")
@@ -18,8 +19,7 @@ fabricante = 'FORTINET'
 def scraper():
     print("Iniciando scraper FORTINET...")
     options = Options()
-    options.add_argument('--headless')
-
+    options.add_argument('--window-size=1920,1080')  # Simula uma janela de navegador real
     nav = webdriver.Chrome(options=options)
     paginas = [
         "https://www.fortiguard.com/psirt"
@@ -28,8 +28,8 @@ def scraper():
     for pagina in paginas:
         nav.get(pagina)        
 
-        WebDriverWait(nav, 20).until(
-            EC.presence_of_all_elements_located((By.CLASS_NAME, "container-xxl"))
+        WebDriverWait(nav, 15).until(
+            EC.presence_of_element_located((By.ID, "full-page"))
         )
 
         ano_click = nav.find_element(By.XPATH, f'//*[@id="full-page"]/section[2]/div/div[1]/div/form/div/div[3]/div/span[2]/span[1]/span')

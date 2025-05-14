@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 from io import BytesIO
 from xlsxwriter import Workbook
 import requests
+from corpo_email import html
 
 if getattr(sys, 'frozen', False):  # executável
     base_path = sys._MEIPASS
@@ -23,7 +24,7 @@ else:
 
 dotenv_path = os.path.join(base_path, '.env')
 load_dotenv(dotenv_path)
-    
+
 username = os.getenv('EMAIL_USER')
 senha = os.getenv('EMAIL_PASSWORD')
 webhook_url = os.getenv('WEBHOOK_URL')
@@ -49,21 +50,16 @@ def enviar_email(resultado, excel_buffer):
     smtp_port = 465
     destinatarios = ['luan.siqueira@compwire.com.br','vinicius.clemente@compwire.com.br','thiago.mendes@compwire.com.br','fabio.aquino@compwire.com.br']
     assunto = 'CVES'
-    corpo = f'''
-    Olá,
 
-    Segue em anexo o relatório de CVEs identificados no dia de hoje, totalizando {len(resultado)} ocorrências.
+    corpo = html.html(str(len(resultado)))
     
-    Por favor, revise as informações e, se necessário, acione os responsáveis pelas tratativas conforme a criticidade dos registros.
-
-    Qualquer dúvida, estou à disposição.'''
 
     msg = MIMEMultipart()
     msg["From"] = username
     msg["To"]= ', '.join(destinatarios)
     msg["Subject"] = assunto
 
-    msg.attach(MIMEText(corpo,"plain"))
+    msg.attach(MIMEText(corpo,'html'))
 
      # Anexa o Excel da memória
     parte = MIMEApplication(excel_buffer.read(), _subtype="xlsx")
@@ -119,7 +115,7 @@ def gereciador_scraping():
             executor.submit(fortinet.scraper),   #12
             executor.submit(veeam.scraper)       #13
             # ivant cadastrar                    #14
-            # CloudFlare api                     #15
+            # CloudFlare github                  #15
             # Apura não tem site                 #16
             # Cloudera cadastrar                 #17   
         ]
