@@ -17,9 +17,8 @@ fabricante = 'GOOGLE'
 def scraper():
     print("Iniciando scraper google...")
     options = Options()
-    #options.add_argument('--headless')
-
-    options.add_argument('--start-maximized')
+    options.add_argument('--headless')
+    #options.add_argument('--start-maximized')
     nav = webdriver.Chrome(options=options)
     paginas = [
         "https://cloud.google.com/support/bulletins?hl=pt-br"
@@ -71,7 +70,7 @@ def scraper():
     print("Finalizando scraper google.")
     
     nav.quit()
-    print(resultado)
+    #print(resultado)
     return resultado, fabricante
 
-scraper()
+##scraper()
