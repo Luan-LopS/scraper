@@ -5,6 +5,7 @@ from selenium.common.exceptions import StaleElementReferenceException, NoSuchEle
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from datetime import date #datas
+from time import sleep
 
 
 hoje = date.today() # dia de hoje 
@@ -16,9 +17,9 @@ fabricante = 'GOOGLE'
 def scraper():
     print("Iniciando scraper google...")
     options = Options()
-    options.add_argument('--headless')
+    #options.add_argument('--headless')
 
-    #options.add_argument('--start-maximized')
+    options.add_argument('--start-maximized')
     nav = webdriver.Chrome(options=options)
     paginas = [
         "https://cloud.google.com/support/bulletins?hl=pt-br"
@@ -44,25 +45,12 @@ def scraper():
                     break
     
                 data = datas[i]
-                titulo = data.find_element(By.XPATH, "preceding-sibling::*[1]")
+                titulo = data.find_element(By.XPATH, "preceding-sibling::*[1]").text
                 tabela = data.find_element(By.XPATH,"following-sibling::*[2]")
-                
                 urgencia = tabela.find_element(By.XPATH, '//section/div/table/tbody/tr/td[2]').text
+                descricao = tabela.find_element(By.XPATH,'//*[@id="main-content"]/devsite-content/article/div[4]/section/div/table/tbody/tr/td[1]').text
                 link = tabela.find_element(By.XPATH, '//section/div/table/tbody/tr/td[3]/a')
-                link.click()
-                
-                WebDriverWait(nav, 10).until(
-                    EC.presence_of_element_located((By.XPATH, '//*[@id="GeneratedTable"]/table/tbody/tr[4]/td'))
-                )
-
-                descricao = nav.find_element(By.XPATH,'//*[@id="GeneratedTable"]/table/tbody/tr[4]/td').text
-
-                pag = nav.current_url
-                nav.back()
-              
-                WebDriverWait(nav, 10).until(
-                    EC.presence_of_all_elements_located((By.CLASS_NAME, "bulletins"))
-                )
+                pag = link.get_attribute("href")
 
                 result = {
                     'data': pesquisa_data,
@@ -83,7 +71,7 @@ def scraper():
     print("Finalizando scraper google.")
     
     nav.quit()
-    #print(resultado)
+    print(resultado)
     return resultado, fabricante
 
-#scraper()
+scraper()
