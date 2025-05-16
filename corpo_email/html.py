@@ -1,4 +1,11 @@
 from datetime import datetime
+import os
+import sys
+
+def caminho_relativo(nome_arquivo):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, 'corpo_email', nome_arquivo)
+    return os.path.join('corpo_email', nome_arquivo)
 
 def html(tamanho):
     hoje = datetime.now()
@@ -9,10 +16,13 @@ def html(tamanho):
         saudacao = "Bom dia" 
     elif 12<= hora < 18:
         saudacao = "Boa tarde"
-    elif 18<= hora < 00:
+    elif 18<= hora < 23:
         saudacao = "Boa Noite"
 
-    with open(file='corpo_email/email_comp.html', mode='r', encoding='utf-8') as html:
+    caminho_html = caminho_relativo('email_comp.html')
+
+
+    with open(file=caminho_html, mode='r', encoding='utf-8') as html:
         html_comp = html.read()
 
     html_comp = html_comp.replace('{{saudacao}}', saudacao)
