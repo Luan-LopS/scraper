@@ -49,7 +49,7 @@ def enviar_email(resultado, excel_buffer):
     smtp_server = 'smtp.gmail.com'
     smtp_port = 465
     destinatarios = ['luan.siqueira@compwire.com.br','vinicius.clemente@compwire.com.br','thiago.mendes@compwire.com.br','fabio.aquino@compwire.com.br', 'isaac.santos@compwire.com.br']
-    assunto = 'CVES'
+    assunto = 'Relatorio de CVES'
 
     corpo = html.html(str(len(resultado)))
 
