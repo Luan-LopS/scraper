@@ -47,7 +47,6 @@ def scraper():
                     break
                 
                 data = datas[i]
-                
                 linha = data.find_element(By.XPATH, "preceding-sibling::td")
                 link = linha.find_element(By.XPATH, ".//a")
                 link.click()
@@ -85,7 +84,7 @@ def scraper():
     print("Finalizando scraper oracle.")
     
     nav.quit()
-#    print(resultado)
+#   print(resultado)
     return resultado, fabricante
 
 #scraper()

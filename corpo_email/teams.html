@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Email</title>
 </head>
 
 <body style="margin:0; padding:0; font-family: Arial, sans-serif; background-color:#f4f4f4;">
-    <table align="center" width="800" cellpadding="0" cellspacing="0"
+    <table align="center" width="1200" cellpadding="0" cellspacing="0"
         style="background-color:#ffffff; margin-top:20px; border:1px solid #ddd;">
         <tr>
             <td style="background-color:#007BFF; padding:20px; text-align:center; color:#ffffff;">
-                <h1 style="margin:0; color: #053fff;">Scraper SOC - COMPWIRE</h1>
+                <h1 style="margin:0;">Scraper SOC - COMPWIRE</h1>
             </td>
         </tr>
         <tr>
@@ -22,10 +22,23 @@
                     Segue em anexo o relatório de CVEs identificados no dia {{hoje}}, totalizando {{resultado}}
                     ocorrências.
                 </p>
+
+                <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+                    <thead style="background-color: #007BFF; color: white;">
+                        <tr>
+                            <th>Fabricante</th>
+                            <th>Título</th>
+                            <th>Criticidade</th>
+                            <th>link</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{tabela_alertas}}
+                    </tbody>
+                </table>
+
                 <p style="font-size:16px; color:#555; padding-bottom: 20px;">
-                    Por favor, revise as informações e, se necessário, acione os responsáveis pelas tratativas conforme
-                    a
-                    criticidade dos registros.
+                    Por favor, revise as informações e, se necessário, acione os responsáveis pelas tratativas conforme a criticidade dos registros.
                 </p>
             </td>
         </tr>
@@ -35,6 +48,8 @@
             </td>
         </tr>
     </table>
+    <br>
+    <br>
 
 </body>
 

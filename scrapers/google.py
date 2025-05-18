@@ -54,7 +54,7 @@ def scraper():
                 result = {
                     'data': pesquisa_data,
                     'titulo' :titulo,
-                    'descição': descricao,
+                    'descrição': descricao,
                     'urgencia': urgencia,
                     'link': pag
                     }
