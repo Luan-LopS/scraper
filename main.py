@@ -13,7 +13,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from io import BytesIO
-from corpo_email import html, teams
+from corpo_email import html
 from scrapers import palo_alto, splunk, qualys, trend, huawei, aws, google, oragle, dynatrace, ibm, red_hat, fortinet, veeam, cve_details # importa scrapers
 
 
@@ -30,8 +30,8 @@ senha = os.getenv('EMAIL_PASSWORD')
 webhook_url = os.getenv('WEBHOOK_URL')
 
 
-def enviar_teams(mensagem):
-
+def enviar_teams(resultado):
+    mensagem = html.teams(resultado)
     payload = {"text": mensagem}
     headers = {"Content-Type": "application/json"}
     response = requests.post(webhook_url, json=payload, headers=headers)
@@ -52,7 +52,7 @@ def enviar_email(resultado, excel_buffer):
     destinatarios = ['luan.siqueira@compwire.com.br','vinicius.clemente@compwire.com.br','thiago.mendes@compwire.com.br','fabio.aquino@compwire.com.br', 'isaac.santos@compwire.com.br', 'marcio.oliveira@compwire.com.br']
     assunto = 'Relatorio de CVES'
 
-    corpo = teams.html(resultado)
+    corpo = html.email(resultado)
 
     msg = MIMEMultipart()
     msg["From"] = username
@@ -71,7 +71,7 @@ def enviar_email(resultado, excel_buffer):
             srv.send_message(msg)
             print('Email enviado')
 
-        enviar_teams(corpo)
+        enviar_teams(resultado)
     except Exception as e:
         print('Erro ao enviar e-mail:', e)
 
