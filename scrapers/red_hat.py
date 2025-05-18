@@ -17,7 +17,7 @@ fabricante = 'RED HAT'
 def scraper():
     print("Iniciando scraper RED HAT...")
     options = Options()
-    options.add_argument('--headless')
+    #options.add_argument('--headless')
 
     nav = webdriver.Chrome(options=options)
     paginas = [
@@ -56,7 +56,7 @@ def scraper():
 
         i = 0
         titulo = None
-        urgencia = None
+        urgencia = ""
         descricao = None
         pag = None
 

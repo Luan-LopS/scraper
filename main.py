@@ -13,7 +13,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from io import BytesIO
-from corpo_email import html
+from mensagem import html
 from scrapers import palo_alto, splunk, qualys, trend, huawei, aws, google, oragle, dynatrace, ibm, red_hat, fortinet, veeam, cve_details # importa scrapers
 
 

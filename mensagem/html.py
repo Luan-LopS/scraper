@@ -1,7 +1,7 @@
 from datetime import datetime
 import os
 import sys
-
+import html2text
 
 def caminho_relativo(nome_arquivo):
     if hasattr(sys, '_MEIPASS'):
@@ -28,7 +28,7 @@ def email(alertas):
     tamanho = str(len(alertas))
     data_str, saudacao = comprimento()
 
-    caminho_html = caminho_relativo('email_comp.html')
+    caminho_html = caminho_relativo('mensagem/email_comp.html')
 
     with open(file=caminho_html, mode='r', encoding='utf-8') as html:
         html_comp = html.read()
@@ -63,7 +63,7 @@ def teams(alertas):
     tamanho = str(len(alertas))
     data_str, saudacao = comprimento()
 
-    caminho_html = caminho_relativo('teams.html')
+    caminho_html = caminho_relativo('mensagem/teams.html')
 
     with open(file=caminho_html, mode='r', encoding='utf-8') as html:
         html_comp = html.read()
@@ -91,8 +91,13 @@ def teams(alertas):
         """
 
     html_comp = html_comp.replace('{{tabela_alertas}}', tabela_html)
- 
+    
+    h = html2text.HTML2Text()
+    # Ignore converting links from HTML
+    h.ignore_links = False
+    markdown = h.handle(html_comp)
+    
     #print(html_comp)
-    return html_comp
+    return markdown
 
 #teams()
